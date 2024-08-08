@@ -3,10 +3,10 @@ import { ContactForm } from './ContactForm/ContactForm';
 import { Filter } from './Filter/Filter';
 import { ContactList } from './ContactList/ContactList';
 import { useSelector } from 'react-redux';
-import { getContacts, getFilter } from 'redux/selectors';
+import { getContacts, getFilter } from '../redux/selectors';
 import { useDispatch } from 'react-redux';
-import { addContact } from 'redux/contactsSlice';
-import { setFilter } from 'redux/filterSlice';
+import { addContact } from '../redux/contactsSlice';
+import { setFilter } from '../redux/filterSlice';
 
 const retrievedInitialContacts = () => {
   const savedContacts = JSON.parse(localStorage.getItem('contacts'));
