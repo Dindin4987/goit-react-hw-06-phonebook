@@ -1,5 +1,7 @@
-// selector that retrieves the contacts portion or slice of the initialState
+// src/redux/selectors.js
+
+// Selector for retrieving contacts from the state
 export const getContacts = state => state.contacts;
 
-// selector that retrieves the filter portion or slice of the initialState
+// Selector for retrieving the current filter value
 export const getFilter = state => state.filter;

@@ -1,34 +1,60 @@
-// import { createStore } from 'redux';
+// store.js
+import { combineReducers } from 'redux';
 // import { devToolsEnhancer } from '@redux-devtools/extension';
-// import { combineReducers } from 'redux';
-import { contactsReducer } from './reducers';
-import { filterReducer } from './reducers';
+// import { contactsReducer } from '../redux/reducers';
+// import { filterReducer } from '../redux/reducers';
+import { contactsSlice } from '../redux/contactsSlice';
+import { filterSlice } from '../redux/filterSlice';
 import { configureStore } from '@reduxjs/toolkit';
-import { FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER, persistStore } from 'redux-persist';
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
 
+// Combine reducers
+// const rootReducer = combineReducers({
+//   contacts: contactsReducer,
+//   filter: filterReducer,
+// });
 
-// const initialState = {};
-
+// Create a store extension to add developer tools
 // const enhancer = devToolsEnhancer();
 
 // export const store = createStore(rootReducer, enhancer);
 
-// configureStore sets up the enhancer under the hood
-// so that we don't need to manually import the devtools enhancer function
-//to use the Redux Dev Tools
-
-export const store = configureStore({
-  reducer: {
-    contacts: contactsReducer,
-    filter: filterReducer,
-  },
-
-  middleware: getDefaultMiddleware =>
-    getDefaultMiddleware({
-      serializableCheck: {
-        ignoreActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      },
-    })
+// Combine your reducers
+const rootReducer = combineReducers({
+  contacts: contactsSlice.reducer,
+  filter: filterSlice.reducer,
 });
 
+// Create the persist config object
+const persistConfig = {
+  key: 'root', // The key property uniquely identifies the persisted state in the storage.
+  storage, // The storage property specifies the underlying storage engine where the state will be persisted.
+  // You can specify which parts of your state you want to persist here
+  whitelist: ['contacts'], // In your case, you probably only want to persist contacts
+};
+
+// Wrap your rootReducer with persistReducer
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+// export const store = configureStore({
+//   reducer: {
+//     // contacts: contactsReducer,
+//     // filter: filterReducer,
+//     contacts: contactsSlice.reducer,
+//     filter: filterSlice.reducer,
+//   },
+//   // The middleware and devTools enhancer are automatically included by default, so you don't need to specify them.
+// });
+
+// Create the store with the persisted reducer
+export const store = configureStore({
+  reducer: persistedReducer,
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
+});
+
+// Export the persisted store
 export const persistor = persistStore(store);
